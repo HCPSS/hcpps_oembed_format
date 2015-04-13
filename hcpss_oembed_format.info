@@ -1,0 +1,7 @@
+name = HCPSS oEmbed Format
+description = Format oEmbed media
+core = 7.x
+package = HCPSS
+version = "7.x-1.0"
+
+dependencies[] = media_oembed (2.x)

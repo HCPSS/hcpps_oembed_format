@@ -1,0 +1,77 @@
+<?php
+
+/**
+ * Get the oembed provider name given a file
+ * 
+ * @param unknown $file
+ * @return string
+ */
+function hcpss_oembed_format_get_provider_name_from_file($file) {
+  $url      = urldecode(str_replace('oembed://', '', $file->uri));
+  $handler  = new MediaInternetOEmbedHandler($url);
+  $info     = $handler->getOEmbed();
+  
+  return $info['provider_name'];
+}
+
+/**
+ * Implementation of hook_entity_insert
+ */
+function hcpss_oembed_format_entity_insert($entity, $type) {
+  if ($type == 'file' && $entity->filemime == 'image/oembed') {
+    hcpss_oembed_set_entity_title($entity);
+  }
+}
+
+/**
+ * Set the entity title by prefixing the oembed provider
+ * 
+ * @param stdClass $entity
+ */
+function hcpss_oembed_set_entity_title($entity) {
+  // Get the provider info
+  $file           = file_load($entity->fid);
+  $provider_name  = hcpss_oembed_format_get_provider_name_from_file($file);
+  
+  // Prefix the filename with the provider name
+  if (strpos($entity->filename, $provider_name) !== 0) {
+    $entity->filename = $provider_name . ' - ' . $entity->filename;
+  }
+}
+
+/**
+ * Implementation of hook_entity_presave
+ */
+function hcpss_oembed_format_entity_presave($entity, $type) {
+  if ($type == 'file' && $entity->filemime == 'image/oembed') {
+    hcpss_oembed_set_entity_title($entity);
+  }
+}
+
+/**
+ * Implementation of hook_form_alter
+ */
+function hcpss_oembed_format_form_alter(&$form, &$form_state, $form_id) {
+  // Quick fail for forms we are not looking for
+  if ($form_id != 'file_entity_edit' && $form_id != 'media_internet_add_upload') {
+    return;
+  }
+  
+  // Quick fail for forms where there is no filename value
+  if (empty($form['filename']['#default_value'])) {
+    return;
+  }
+  
+  // Quick fail for forms that do not have the entity we are looking for
+  if (empty($form['#entity']) || !property_exists($form['#entity'], 'filemime') || $form['#entity']->filemime != 'image/oembed') {
+    return;
+  }
+  
+  // Remove the provider name for the oembed media
+  $provider_name = hcpss_oembed_format_get_provider_name_from_file($form['#entity']);
+  if (strpos($form['filename']['#default_value'], $provider_name) === 0) {
+    $filename = $form['filename']['#default_value'];
+    $expression = '/^'.$provider_name.'(.*?)(?=[a-zA-Z0-9])/';
+    $form['filename']['#default_value'] = preg_replace($expression, '', $filename);
+  }  
+}
