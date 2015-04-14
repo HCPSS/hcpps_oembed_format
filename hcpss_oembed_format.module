@@ -5,7 +5,7 @@
  */
 function hcpss_oembed_format_entity_insert($entity, $type) {
   if ($type == 'file' && $entity->filemime == 'image/oembed') {
-    hcpss_oembed_set_entity_title($entity);
+    hcpss_oembed_format_set_entity_title($entity);
   }
 }
 
@@ -14,7 +14,7 @@ function hcpss_oembed_format_entity_insert($entity, $type) {
  */
 function hcpss_oembed_format_entity_presave($entity, $type) {
   if ($type == 'file' && $entity->filemime == 'image/oembed') {
-    hcpss_oembed_set_entity_title($entity);
+    hcpss_oembed_format_set_entity_title($entity);
   }
 }
 
@@ -65,7 +65,7 @@ function hcpss_oembed_format_get_provider_name_from_file($file) {
  * 
  * @param stdClass $entity
  */
-function hcpss_oembed_set_entity_title($entity) {
+function hcpss_oembed_format_set_entity_title($entity) {
   if(!property_exists($entity, 'fid')){
     // We need a file id
     return;
