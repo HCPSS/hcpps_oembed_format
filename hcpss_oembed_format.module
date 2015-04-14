@@ -44,7 +44,7 @@ function hcpss_oembed_format_form_alter(&$form, &$form_state, $form_id) {
     // since we don't want him editing it. We can remove it safely because it
     // will be added back automatically when the entity is saved.
     $filename = $form['filename']['#default_value'];
-    $filename = str_replace($provider_prefix, '', $filename, 1);
+    $filename = substr_replace($filename, '', 0, strlen($provider_prefix));
     $form['filename']['#default_value'] = $filename;
   }
 }
