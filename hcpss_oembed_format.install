@@ -1,0 +1,22 @@
+<?php
+
+/**
+ * Implementation of hook_install
+ */
+function hcpss_oembed_format_install() {
+  variable_set('hcpss_oembed_format_format', '[provider] - ');
+}
+
+/**
+ * Implement hook_uninstall
+ */
+function hcpss_oembed_format_uninstall() {
+  variable_del('hcpss_oembed_format_format');
+}
+
+/**
+ * Add the new variable for storing the provider format
+ */
+function hcpss_oembed_format_update_7000() {
+  variable_set('hcpss_oembed_format_format', '[provider] - ');
+}

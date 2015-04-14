@@ -73,10 +73,24 @@ function hcpss_oembed_format_set_entity_title($entity) {
 
   // Get the provider info
   $file           = file_load($entity->fid);
-  $provider_name  = hcpss_oembed_format_get_provider_name_from_file($file);
+  $provider_prefix  = hcpss_oembed_format_get_provider_prefix($file);
   
   // Prefix the filename with the provider name
-  if (strpos($entity->filename, $provider_name) !== 0) {
-    $entity->filename = $provider_name . ' - ' . $entity->filename;
+  if (strpos($entity->filename, $provider_prefix) !== 0) {
+    $entity->filename = $provider_prefix . $entity->filename;
   }
+}
+
+/**
+ * Take a file and return the provider prefix
+ *  
+ * @param stdClass $file
+ * @return string
+ */
+function hcpss_oembed_format_get_provider_prefix($file) {
+  $provider_name  = hcpss_oembed_format_get_provider_name_from_file($file);
+  $provider_format = variable_get('hcpss_oembed_format_format', '[provider] - ');
+  $prefix = str_replace('[provider]', $provider_name, $provider_format);
+  
+  return $prefix;
 }
