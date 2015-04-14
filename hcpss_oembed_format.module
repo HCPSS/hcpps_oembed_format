@@ -38,11 +38,14 @@ function hcpss_oembed_format_form_alter(&$form, &$form_state, $form_id) {
   }
 
   // Remove the provider name for the oembed media
-  $provider_name = hcpss_oembed_format_get_provider_name_from_file($form['#entity']);
-  if (strpos($form['filename']['#default_value'], $provider_name) === 0) {
+  $provider_prefix = hcpss_oembed_format_get_provider_prefix($form['#entity']);
+  if (strpos($form['filename']['#default_value'], $provider_prefix) === 0) {
+    // The provider prefix is present on this form. Let's hide it from the user
+    // since we don't want him editing it. We can remove it safely because it
+    // will be added back automatically when the entity is saved.
     $filename = $form['filename']['#default_value'];
-    $expression = '/^'.$provider_name.'(.*?)(?=[a-zA-Z0-9])/';
-    $form['filename']['#default_value'] = preg_replace($expression, '', $filename);
+    $filename = str_replace($provider_prefix, '', $filename, 1);
+    $form['filename']['#default_value'] = $filename;
   }
 }
 
