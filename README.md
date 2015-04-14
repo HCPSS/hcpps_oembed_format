@@ -1,4 +1,4 @@
-# HCOSS oEmbed Format
+# HCPSS oEmbed Format
 
 A Drupal module that adds the oEmbed provider name to the filename of the
 entity.
